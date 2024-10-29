@@ -58,13 +58,17 @@
             img.onload = () => {
                 loadedImagesCount++;
                 if (loadedImagesCount === totalImages) {
-                    startImageCycle(); 
+                    document.getElementById('loader').innerText = "Нажмите, чтобы начать";
                 }
             };
             images.push(img);
         }
 
+        document.body.addEventListener('click', startImageCycle);
+
         function startImageCycle() {
+            document.body.removeEventListener('click', startImageCycle);
+
             document.getElementById('loader').style.display = 'none'; 
             const imgElement = document.getElementById('images');
             imgElement.style.display = 'block'; 
