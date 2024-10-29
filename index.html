@@ -47,47 +47,61 @@
     <div id="text">Bad Apple</div>
     <audio id="backgroundAudio" src="bad_apple.wav" preload="auto"></audio> 
     
-    <script>
-        const totalImages = 6562;
-        let loadedImagesCount = 0;
-        const images = [];
+<script>
+    const totalImages = 6562;
+    let loadedImagesCount = 0;
+    const images = [];
 
-        for (let i = 1; i <= totalImages; i++) {
-            const img = new Image();
-            img.src = `images/bad_apple_${i.toString().padStart(3, '0')}.png`;
-            img.onload = () => {
-                loadedImagesCount++;
-                if (loadedImagesCount === totalImages) {
-                    document.getElementById('loader').innerText = "Нажмите, чтобы начать";
-                }
-            };
-            images.push(img);
-        }
-
-        document.body.addEventListener('click', startImageCycle);
-
-        function startImageCycle() {
-            document.body.removeEventListener('click', startImageCycle);
-
-            document.getElementById('loader').style.display = 'none'; 
-            const imgElement = document.getElementById('images');
-            imgElement.style.display = 'block'; 
-            imgElement.src = images[0].src; 
-
-            const audioElement = document.getElementById('backgroundAudio');
-            audioElement.play().catch(error => {
-                console.error('Ошибка воспроизведения:', error);
-            });
-
-            let currentImageIndex = 0;
-
-            function changeImage() {
-                currentImageIndex = (currentImageIndex + 1) % totalImages;
-                imgElement.src = images[currentImageIndex].src;
+    for (let i = 1; i <= totalImages; i++) {
+        const img = new Image();
+        img.src = `images/bad_apple_${i.toString().padStart(3, '0')}.png`;
+        img.onload = () => {
+            loadedImagesCount++;
+            if (loadedImagesCount === totalImages) {
+                document.getElementById('loader').innerText = "Нажмите, чтобы начать";
             }
+        };
+        images.push(img);
+    }
 
-            setInterval(changeImage, 33); 
+    document.body.addEventListener('click', startImageCycle);
+
+    function startImageCycle() {
+        document.body.removeEventListener('click', startImageCycle);
+
+        document.getElementById('loader').style.display = 'none'; 
+        const imgElement = document.getElementById('images');
+        imgElement.style.display = 'block'; 
+        imgElement.src = images[0].src; 
+
+        const audioElement = document.getElementById('backgroundAudio');
+        audioElement.play().catch(error => {
+            console.error('Ошибка воспроизведения:', error);
+        });
+
+        let currentImageIndex = 0;
+
+        function changeImage() {
+            currentImageIndex++;
+            if (currentImageIndex < totalImages) {
+                imgElement.src = images[currentImageIndex].src;
+            } else {
+                clearInterval(imageInterval);
+                audioElement.pause(); 
+                audioElement.currentTime = 0; 
+                setTimeout(() => {
+                    currentImageIndex = 0; 
+                    imgElement.src = images[currentImageIndex].src; 
+                    audioElement.play().catch(error => {
+                        console.error('Ошибка воспроизведения:', error);
+                    });
+                    imageInterval = setInterval(changeImage, 33); 
+                }, 3000); 
+            }
         }
-    </script>
+
+        let imageInterval = setInterval(changeImage, 33); // Начать цикл изображений
+    }
+</script>
 </body>
 </html>
